@@ -1,4 +1,4 @@
-# AWS Cognito Terraform Configuration
+# Deploy AWS Cognito with Terraform
 
 This repository contains Terraform code to deploy and manage AWS Cognito resources for user authentication and authorization.
 

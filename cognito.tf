@@ -1,8 +1,8 @@
 # 1. User Pool
 resource "aws_cognito_user_pool" "this" {
   name                     = "olcb-community-user-pool"
-  username_attributes      = ["email"]
-  auto_verified_attributes = ["email"]
+  username_attributes      = ["email", "phone_number"]
+  auto_verified_attributes = ["email", "phone_number"]
 
   admin_create_user_config {
     allow_admin_create_user_only = false
@@ -24,14 +24,22 @@ resource "aws_cognito_user_pool" "this" {
   }
 
   schema {
-    name                = "custom_attr"
-    attribute_data_type = "Number"
-    required            = false
-    mutable             = true
-    number_attribute_constraints {
-      min_value = 1
-      max_value = 100
-    }
+    name                = "phone_number"
+    attribute_data_type = "String"
+    required            = true
+  }
+
+  mfa_configuration          = "ON"
+  sms_authentication_message = "Your code is {####}"
+
+  sms_configuration {
+    external_id    = "cognito-external-id"
+    sns_caller_arn = aws_iam_role.cognito_sms_role.arn
+    sns_region     = var.region
+  }
+
+  software_token_mfa_configuration {
+    enabled = true
   }
 
   tags = {
@@ -49,7 +57,7 @@ resource "aws_cognito_user_pool_client" "this" {
   allowed_oauth_flows                  = ["code", "implicit"]
   allowed_oauth_scopes                 = ["email", "openid", "profile"]
   explicit_auth_flows                  = ["ADMIN_NO_SRP_AUTH", "USER_PASSWORD_AUTH"]
-  callback_urls                        = ["https://example.com/callback"]
+  callback_urls                        = ["https://social.olcortesb.com/", "https://example.com/callback"]
   logout_urls                          = ["https://example.com/logout"]
 
   supported_identity_providers = ["COGNITO"]

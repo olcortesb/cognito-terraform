@@ -24,6 +24,33 @@ Actions:
         - Run: ./terraform init
         - Run: ./terraform validate
         - Run: ./terraform plan -var="environment=dev" -var="region=us-east-1"
+    Outputs:
+      Artifacts:
+        - Name: terraform_files
+          Files:
+            - "terraform"
+            - ".terraform/**"
+            - "*.tf"
+            - "*.tfstate*"
+    Environment:
+      Name: dev
+      Connections:
+        - Name: olcortesb-account
+          Role: CodeCatalystWorkflowDevelopmentRole-olcortesb
+
+  TerraformApply:
+    Identifier: aws/build@v1
+    DependsOn:
+      - TerraformPlan
+    Inputs:
+      Sources:
+        - WorkflowSource
+      Artifacts:
+        - terraform_files
+    Configuration:
+      Steps:
+        - Run: chmod +x terraform
+        - Run: ./terraform apply -var="environment=dev" -var="region=us-east-1" -auto-approve
     Environment:
       Name: dev
       Connections:

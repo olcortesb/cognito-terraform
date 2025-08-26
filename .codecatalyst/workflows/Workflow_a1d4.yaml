@@ -39,7 +39,7 @@ Actions:
       Steps:
         - Run: |
             terraform init
-            terraform plan -out=tfplan
+            terraform plan -var="user_pool_name=codecatalyst-cognito-pool" -out=tfplan
             echo "📋 Terraform plan completed"
     Environment:
       Name: dev

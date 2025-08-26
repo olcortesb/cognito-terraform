@@ -9,7 +9,7 @@ Triggers:
 
 Actions:
   # Validación de Terraform
-  TerraformValidate:
+  Terraform_Validate:
     Identifier: aws/build@v1
     Inputs:
       Sources:
@@ -28,10 +28,10 @@ Actions:
           Role: CodeCatalystWorkflowDevelopmentRole-spacename
 
   # Plan de Terraform
-  TerraformPlan:
+  Terraform_Plan:
     Identifier: aws/build@v1
     DependsOn:
-      - TerraformValidate
+      - Terraform_Validate
     Inputs:
       Sources:
         - WorkflowSource
@@ -48,21 +48,21 @@ Actions:
           Role: CodeCatalystWorkflowDevelopmentRole-spacename
     Outputs:
       Artifacts:
-        - Name: terraform-plan
+        - Name: terraform_plan
           Files:
             - "tfplan"
             - ".terraform/**"
 
   # Apply de Terraform
-  TerraformApply:
+  Terraform_Apply:
     Identifier: aws/build@v1
     DependsOn:
-      - TerraformPlan
+      - Terraform_Plan
     Inputs:
       Sources:
         - WorkflowSource
       Artifacts:
-        - terraform-plan
+        - terraform_plan
     Configuration:
       Steps:
         - Run: |

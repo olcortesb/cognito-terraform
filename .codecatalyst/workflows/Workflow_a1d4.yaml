@@ -1,9 +1,77 @@
-Name: Workflow_a1d4
+Name: Terraform-Deploy
 SchemaVersion: "1.0"
 
-# Optional - Set automatic triggers.
+# Trigger automático en push a main
 Triggers:
   - Type: PUSH
     Branches:
       - main
+
 Actions:
+  # Validación de Terraform
+  TerraformValidate:
+    Identifier: aws/build@v1
+    Inputs:
+      Sources:
+        - WorkflowSource
+    Configuration:
+      Steps:
+        - Run: |
+            terraform --version
+            terraform init
+            terraform validate
+            echo "✅ Terraform validation passed"
+    Environment:
+      Name: production
+      Connections:
+        - Name: default_account
+          Role: CodeCatalystWorkflowDevelopmentRole-spacename
+
+  # Plan de Terraform
+  TerraformPlan:
+    Identifier: aws/build@v1
+    DependsOn:
+      - TerraformValidate
+    Inputs:
+      Sources:
+        - WorkflowSource
+    Configuration:
+      Steps:
+        - Run: |
+            terraform init
+            terraform plan -out=tfplan
+            echo "📋 Terraform plan completed"
+    Environment:
+      Name: production
+      Connections:
+        - Name: default_account
+          Role: CodeCatalystWorkflowDevelopmentRole-spacename
+    Outputs:
+      Artifacts:
+        - Name: terraform-plan
+          Files:
+            - "tfplan"
+            - ".terraform/**"
+
+  # Apply de Terraform
+  TerraformApply:
+    Identifier: aws/build@v1
+    DependsOn:
+      - TerraformPlan
+    Inputs:
+      Sources:
+        - WorkflowSource
+      Artifacts:
+        - terraform-plan
+    Configuration:
+      Steps:
+        - Run: |
+            terraform init
+            terraform apply tfplan
+            echo "🚀 Terraform apply completed"
+    Environment:
+      Name: production
+      Connections:
+        - Name: default_account
+          Role: CodeCatalystWorkflowDevelopmentRole-spacename
+

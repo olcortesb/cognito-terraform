@@ -1,5 +1,5 @@
 Name: TerraformDeploy
-SchemaVersion: 1.0
+SchemaVersion: "1.0"
 
 Triggers:
   - Type: PUSH
@@ -7,27 +7,15 @@ Triggers:
       - main
 
 Actions:
-  TerraformAction:
-    Identifier: hashicorp/terraform@v1.0.0
+  TerraformPlan:
+    Identifier: aws/build@v1
     Inputs:
       Sources:
         - WorkflowSource
     Configuration:
-      TerraformVersion: 1.6.0
-      Region: us-east-1
-      BackendConfig:
-        BucketName: codecatalyst-terraform-state-bucket
-        Key: cognito/terraform.tfstate
-      Variables:
-        - Name: user_pool_name
-          Value: codecatalyst-cognito-pool
       Steps:
-        - init
-        - validate
-        - plan
-        - apply
-    Environment:
-      Name: dev
-      Connections:
-        - Name: olcortesb-account
-          Role: CodeCatalystWorkflowDevelopmentRole-olcortesb
+        - Run: terraform init
+        - Run: terraform validate
+        - Run: terraform plan -var="user_pool_name=codecatalyst-cognito-pool"
+    Compute:
+      Type: Lambda

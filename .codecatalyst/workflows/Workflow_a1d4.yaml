@@ -1,74 +1,22 @@
-Name: TerraformDeploy
-SchemaVersion: "1.0"
-
-# Trigger automático en push a main
-Triggers:
-  - Type: PUSH
-    Branches:
-      - main
-
-Actions:
-  # Validación de Terraform
-  Terraform_Validate:
-    Identifier: aws/build@v1
+  TerraformAction:
+    Identifier: hashicorp/terraform@v1.0.0
     Inputs:
       Sources:
         - WorkflowSource
     Configuration:
+      TerraformVersion: 1.6.0
+      Region: us-east-1
+      BackendConfig:
+        BucketName: codecatalyst-terraform-state-bucket
+        Key: cognito/terraform.tfstate
+      Variables:
+        - Name: user_pool_name
+          Value: codecatalyst-cognito-pool
       Steps:
-        - Run: |
-            terraform --version
-            terraform init
-            terraform validate
-            echo "✅ Terraform validation passed"
-    Environment:
-      Name: dev
-      Connections:
-        - Name: olcortesb-account
-          Role: CodeCatalystWorkflowDevelopmentRole-olcortesb
-
-  # Plan de Terraform
-  Terraform_Plan:
-    Identifier: aws/build@v1
-    DependsOn:
-      - Terraform_Validate
-    Inputs:
-      Sources:
-        - WorkflowSource
-    Configuration:
-      Steps:
-        - Run: terraform init
-        - Run: terraform plan -var="user_pool_name=codecatalyst-cognito-pool" -out=tfplan
-        - Run: ls -la
-        - Run: echo "📋 Terraform plan completed"
-    Environment:
-      Name: dev
-      Connections:
-        - Name: olcortesb-account
-          Role: CodeCatalystWorkflowDevelopmentRole-olcortesb
-    Outputs:
-      Artifacts:
-        - Name: terraform_plan
-          Files:
-            - "tfplan"
-            - ".terraform/**"
-
-  # Apply de Terraform
-  Terraform_Apply:
-    Identifier: aws/build@v1
-    DependsOn:
-      - Terraform_Plan
-    Inputs:
-      Sources:
-        - WorkflowSource
-      Artifacts:
-        - terraform_plan
-    Configuration:
-      Steps:
-        - Run: |
-            terraform init
-            terraform apply tfplan
-            echo "🚀 Terraform apply completed"
+        - init
+        - validate
+        - plan
+        - apply
     Environment:
       Name: dev
       Connections:

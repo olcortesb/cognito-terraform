@@ -69,20 +69,16 @@ Actions:
             unzip terraform_1.9.8_linux_amd64.zip
             chmod +x terraform
         - Run: |
-            echo "Listing current directory contents:"
-            ls -la
-            echo "Checking for artifacts directory:"
-            find . -name "*tfplan*" -o -name "TerraformPlanArtifact" -type d
-            echo "Looking for all files:"
-            find . -name "tfplan" -type f
-        - Run: |
-            # Los artefactos se descargan en un subdirectorio
-            if [ -d "TerraformPlanArtifact" ]; then
-              echo "Found TerraformPlanArtifact directory"
-              ls -la TerraformPlanArtifact/
-              cp TerraformPlanArtifact/* .
-            fi
+            echo "Checking all directories recursively:"
+            find / -name "*tfplan*" 2>/dev/null || true
+            echo "Checking CODEBUILD environment variables:"
+            env | grep -i artifact || true
+            echo "Checking for any terraform files:"
+            find . -name "*.tf*" -type f
         - Run: ./terraform init
+        - Run: |
+            echo "Re-creating plan in apply step as workaround:"
+            ./terraform plan -var="environment=dev" -var="region=eu-central-1" -out=tfplan
         - Run: ./terraform apply -auto-approve tfplan
     Environment:
       Name: dev

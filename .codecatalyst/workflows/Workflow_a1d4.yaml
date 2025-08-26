@@ -22,7 +22,7 @@ Actions:
             terraform validate
             echo "✅ Terraform validation passed"
     Environment:
-      Name: production
+      Name: dev
       Connections:
         - Name: default_account
           Role: CodeCatalystWorkflowDevelopmentRole-spacename
@@ -42,7 +42,7 @@ Actions:
             terraform plan -out=tfplan
             echo "📋 Terraform plan completed"
     Environment:
-      Name: production
+      Name: dev
       Connections:
         - Name: default_account
           Role: CodeCatalystWorkflowDevelopmentRole-spacename
@@ -70,8 +70,7 @@ Actions:
             terraform apply tfplan
             echo "🚀 Terraform apply completed"
     Environment:
-      Name: production
+      Name: dev
       Connections:
         - Name: default_account
           Role: CodeCatalystWorkflowDevelopmentRole-spacename
-

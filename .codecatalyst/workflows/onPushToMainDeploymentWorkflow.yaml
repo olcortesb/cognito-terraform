@@ -10,19 +10,6 @@ Triggers:
       - main
 
 # ---------------------------------------------------------------------------------
-# Variables globales del workflow
-# ---------------------------------------------------------------------------------
-Compute:
-  Type: EC2
-  Fleet: Linux.x86-64.Large
-
-Environment:
-  Name: dev
-  Connections:
-    - Name: olcortesb-account
-      Role: CodeCatalystWorkflowDevelopmentRole-olcortesb
-
-# ---------------------------------------------------------------------------------
 # Actions: Define los pasos del flujo de trabajo
 # ---------------------------------------------------------------------------------
 Actions:
@@ -32,6 +19,9 @@ Actions:
   # -------------------------------------------------------------------------------
   TerraformInitAndPlan:
     Identifier: aws/build@v1
+    Compute:
+      Type: EC2
+      Fleet: Linux.x86-64.Large
     Inputs:
       Sources:
         - WorkflowSource
@@ -44,14 +34,16 @@ Actions:
     Configuration:
       Steps:
         - Run: |
-            # Instalar Terraform usando tfenv para mejor gestión de versiones
-            curl -L https://github.com/tfutils/tfenv/archive/v3.0.0.tar.gz | tar -xz
-            sudo mv tfenv-3.0.0 /opt/tfenv
-            sudo ln -s /opt/tfenv/bin/* /usr/local/bin/
-            tfenv install 1.9.8
-            tfenv use 1.9.8
-        - Run: terraform init
-        - Run: terraform plan -var="environment=dev" -var="region=eu-central-1" -out=tfplan
+            wget https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip
+            unzip terraform_1.9.8_linux_amd64.zip
+            chmod +x terraform
+        - Run: ./terraform init
+        - Run: ./terraform plan -var="environment=dev" -var="region=eu-central-1" -out=tfplan
+    Environment:
+      Name: dev
+      Connections:
+        - Name: olcortesb-account
+          Role: CodeCatalystWorkflowDevelopmentRole-olcortesb
 
   # -------------------------------------------------------------------------------
   # PASO 2: Aplica el plan de Terraform creado en el paso anterior.
@@ -61,6 +53,9 @@ Actions:
     Identifier: aws/build@v1
     DependsOn:
       - TerraformInitAndPlan
+    Compute:
+      Type: EC2
+      Fleet: Linux.x86-64.Large
     Inputs:
       Sources:
         - WorkflowSource
@@ -69,10 +64,12 @@ Actions:
     Configuration:
       Steps:
         - Run: |
-            # Instalar Terraform usando tfenv
-            curl -L https://github.com/tfutils/tfenv/archive/v3.0.0.tar.gz | tar -xz
-            sudo mv tfenv-3.0.0 /opt/tfenv
-            sudo ln -s /opt/tfenv/bin/* /usr/local/bin/
-            tfenv install 1.9.8
-            tfenv use 1.9.8
-        - Run: terraform apply -auto-approve tfplan
+            wget https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip
+            unzip terraform_1.9.8_linux_amd64.zip
+            chmod +x terraform
+        - Run: ./terraform apply -auto-approve tfplan
+    Environment:
+      Name: dev
+      Connections:
+        - Name: olcortesb-account
+          Role: CodeCatalystWorkflowDevelopmentRole-olcortesb

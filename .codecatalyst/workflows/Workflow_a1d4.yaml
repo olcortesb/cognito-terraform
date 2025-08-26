@@ -24,7 +24,7 @@ Actions:
     Environment:
       Name: dev
       Connections:
-        - Name: 536395113578
+        - Name: olcortesb-account
           Role: CodeCatalystWorkflowDevelopmentRole-spacename
 
   # Plan de Terraform
@@ -44,7 +44,7 @@ Actions:
     Environment:
       Name: dev
       Connections:
-        - Name: 536395113578
+        - Name: olcortesb-account
           Role: CodeCatalystWorkflowDevelopmentRole-spacename
     Outputs:
       Artifacts:
@@ -72,5 +72,6 @@ Actions:
     Environment:
       Name: dev
       Connections:
-        - Name: 536395113578
+        - Name: olcortesb-account
+          Role: CodeCatalystWorkflowDevelopmentRole-spacename
           Role: CodeCatalystWorkflowDevelopmentRole-spacename

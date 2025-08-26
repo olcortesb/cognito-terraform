@@ -23,7 +23,7 @@ Actions:
             ./terraform --version
         - Run: ./terraform init
         - Run: ./terraform validate
-        - Run: ./terraform plan -var="user_pool_name=codecatalyst-cognito-pool"
+        - Run: ./terraform plan -var="environment=dev" -var="region=us-east-1"
     Environment:
       Name: dev
       Connections:

@@ -1,0 +1,78 @@
+Name: onPushToMainDeploymentWorkflow
+SchemaVersion: "1.0"
+
+# ---------------------------------------------------------------------------------
+# Trigger: Se activa con cada push a la rama 'main'
+# ---------------------------------------------------------------------------------
+Triggers:
+  - Type: PUSH
+    Branches:
+      - main
+
+# ---------------------------------------------------------------------------------
+# Variables globales del workflow
+# ---------------------------------------------------------------------------------
+Compute:
+  Type: EC2
+  Fleet: Linux.x86-64.Large
+
+Environment:
+  Name: dev
+  Connections:
+    - Name: olcortesb-account
+      Role: CodeCatalystWorkflowDevelopmentRole-olcortesb
+
+# ---------------------------------------------------------------------------------
+# Actions: Define los pasos del flujo de trabajo
+# ---------------------------------------------------------------------------------
+Actions:
+  # -------------------------------------------------------------------------------
+  # PASO 1: Inicializa Terraform y crea un plan de ejecución.
+  # El plan se guarda como un artefacto para usarlo en el siguiente paso.
+  # -------------------------------------------------------------------------------
+  TerraformInitAndPlan:
+    Identifier: aws/build@v1
+    Inputs:
+      Sources:
+        - WorkflowSource
+    Outputs:
+      Artifacts:
+        - Name: TerraformPlanArtifact
+          Files:
+            - tfplan
+            - ".terraform.lock.hcl"
+    Configuration:
+      Steps:
+        - Run: |
+            # Instalar Terraform usando tfenv para mejor gestión de versiones
+            curl -L https://github.com/tfutils/tfenv/archive/v3.0.0.tar.gz | tar -xz
+            sudo mv tfenv-3.0.0 /opt/tfenv
+            sudo ln -s /opt/tfenv/bin/* /usr/local/bin/
+            tfenv install 1.9.8
+            tfenv use 1.9.8
+        - Run: terraform init
+        - Run: terraform plan -var="environment=dev" -var="region=eu-central-1" -out=tfplan
+
+  # -------------------------------------------------------------------------------
+  # PASO 2: Aplica el plan de Terraform creado en el paso anterior.
+  # Depende de que 'TerraformInitAndPlan' haya finalizado con éxito.
+  # -------------------------------------------------------------------------------
+  TerraformApply:
+    Identifier: aws/build@v1
+    DependsOn:
+      - TerraformInitAndPlan
+    Inputs:
+      Sources:
+        - WorkflowSource
+      Artifacts:
+        - TerraformPlanArtifact
+    Configuration:
+      Steps:
+        - Run: |
+            # Instalar Terraform usando tfenv
+            curl -L https://github.com/tfutils/tfenv/archive/v3.0.0.tar.gz | tar -xz
+            sudo mv tfenv-3.0.0 /opt/tfenv
+            sudo ln -s /opt/tfenv/bin/* /usr/local/bin/
+            tfenv install 1.9.8
+            tfenv use 1.9.8
+        - Run: terraform apply -auto-approve tfplan

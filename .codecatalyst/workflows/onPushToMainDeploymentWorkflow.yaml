@@ -71,8 +71,17 @@ Actions:
         - Run: |
             echo "Listing current directory contents:"
             ls -la
-            echo "Checking for tfplan file:"
+            echo "Checking for artifacts directory:"
+            find . -name "*tfplan*" -o -name "TerraformPlanArtifact" -type d
+            echo "Looking for all files:"
             find . -name "tfplan" -type f
+        - Run: |
+            # Los artefactos se descargan en un subdirectorio
+            if [ -d "TerraformPlanArtifact" ]; then
+              echo "Found TerraformPlanArtifact directory"
+              ls -la TerraformPlanArtifact/
+              cp TerraformPlanArtifact/* .
+            fi
         - Run: ./terraform init
         - Run: ./terraform apply -auto-approve tfplan
     Environment:

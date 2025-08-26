@@ -68,6 +68,11 @@ Actions:
             wget https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip
             unzip terraform_1.9.8_linux_amd64.zip
             chmod +x terraform
+        - Run: |
+            echo "Listing current directory contents:"
+            ls -la
+            echo "Checking for tfplan file:"
+            find . -name "tfplan" -type f
         - Run: ./terraform init
         - Run: ./terraform apply -auto-approve tfplan
     Environment:

@@ -24,5 +24,8 @@ Actions:
         - Run: ./terraform init
         - Run: ./terraform validate
         - Run: ./terraform plan -var="user_pool_name=codecatalyst-cognito-pool"
-    Compute:
-      Type: Lambda
+    Environment:
+      Name: dev
+      Connections:
+        - Name: olcortesb-account
+          Role: CodeCatalystWorkflowDevelopmentRole-olcortesb

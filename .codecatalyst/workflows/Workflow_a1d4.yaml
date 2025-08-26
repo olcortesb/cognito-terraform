@@ -37,10 +37,10 @@ Actions:
         - WorkflowSource
     Configuration:
       Steps:
-        - Run: |
-            terraform init
-            terraform plan -var="user_pool_name=codecatalyst-cognito-pool" -out=tfplan
-            echo "📋 Terraform plan completed"
+        - Run: terraform init
+        - Run: terraform plan -var="user_pool_name=codecatalyst-cognito-pool" -out=tfplan
+        - Run: ls -la
+        - Run: echo "📋 Terraform plan completed"
     Environment:
       Name: dev
       Connections:

@@ -74,4 +74,3 @@ Actions:
       Connections:
         - Name: olcortesb-account
           Role: CodeCatalystWorkflowDevelopmentRole-spacename
-          Role: CodeCatalystWorkflowDevelopmentRole-spacename

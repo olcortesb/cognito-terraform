@@ -1,4 +1,4 @@
-Name: Terraform-Deploy
+Name: TerraformDeploy
 SchemaVersion: "1.0"
 
 # Trigger automático en push a main

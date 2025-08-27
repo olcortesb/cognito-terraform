@@ -27,7 +27,7 @@ Actions:
         - WorkflowSource
     Outputs:
       Artifacts:
-        - Name: TerraformPlanArtifact
+        - Name: ART01
           Files:
             - "tfplan"
             - ".terraform.lock.hcl"
@@ -61,7 +61,7 @@ Actions:
       Sources:
         - WorkflowSource
       Artifacts:
-        - TerraformPlanArtifact
+        - ART01
     Configuration:
       Steps:
         - Run: |
@@ -79,7 +79,7 @@ Actions:
         # - Run: |
         #     echo "Re-creating plan in apply step as workaround:"
         #     ./terraform plan -var="environment=dev" -var="region=eu-central-1" -out=tfplan
-        - Run: cd build-output
+        - Run: cd $CATALYST_SOURCE_DIR_ART01
         - Run: ./terraform apply -auto-approve tfplan
     Environment:
       Name: dev

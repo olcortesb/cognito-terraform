@@ -31,8 +31,9 @@ Actions:
           Files:
             - "tfplan"
             - ".terraform.lock.hcl"
-            - ".terraform/**"
-            - ".terraform/provider/**/*"
+            - ".terraform/**/*"
+            - ".terraform/providers/**/*"
+            - ".terraform/modules/**/*"
     Configuration:
       Steps:
         - Run: |

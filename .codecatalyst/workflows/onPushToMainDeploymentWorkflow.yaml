@@ -29,9 +29,9 @@ Actions:
       Artifacts:
         - Name: TerraformPlanArtifact
           Files:
-            - tfplan
-            - ".terraform.lock.hcl"
-            - ".terraform/**"
+            - build-output/tfplan
+            - build-output/.terraform.lock.hcl
+            - build-output/.terraform
     Configuration:
       Steps:
         - Run: |
@@ -75,10 +75,11 @@ Actions:
             env | grep -i artifact || true
             echo "Checking for any terraform files:"
             find . -name "*.tf*" -type f
-        - Run: ./terraform init
-        - Run: |
-            echo "Re-creating plan in apply step as workaround:"
-            ./terraform plan -var="environment=dev" -var="region=eu-central-1" -out=tfplan
+        # - Run: ./terraform init
+        # - Run: |
+        #     echo "Re-creating plan in apply step as workaround:"
+        #     ./terraform plan -var="environment=dev" -var="region=eu-central-1" -out=tfplan
+        - Run: cd build-output
         - Run: ./terraform apply -auto-approve tfplan
     Environment:
       Name: dev

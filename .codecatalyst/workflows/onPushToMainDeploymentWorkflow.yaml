@@ -79,8 +79,8 @@ Actions:
         # - Run: |
         #     echo "Re-creating plan in apply step as workaround:"
         #     ./terraform plan -var="environment=dev" -var="region=eu-central-1" -out=tfplan
-        - Run: cd $CATALYST_SOURCE_DIR_ART01
-        - Run: ./terraform apply -auto-approve tfplan
+        # - Run: cd $CATALYST_SOURCE_DIR_ART01
+        - Run: ./terraform apply -auto-approve $CATALYST_SOURCE_DIR_ART01/tfplan
     Environment:
       Name: dev
       Connections:

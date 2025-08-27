@@ -64,6 +64,7 @@ Actions:
         - ART01
     Configuration:
       Steps:
+        - Run: cd $CATALYST_SOURCE_DIR_ART01
         - Run: |
             wget https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip
             unzip terraform_1.9.8_linux_amd64.zip
@@ -80,7 +81,7 @@ Actions:
         #     echo "Re-creating plan in apply step as workaround:"
         #     ./terraform plan -var="environment=dev" -var="region=eu-central-1" -out=tfplan
         # - Run: cd $CATALYST_SOURCE_DIR_ART01
-        - Run: ./terraform apply -auto-approve $CATALYST_SOURCE_DIR_ART01/tfplan
+        - Run: ./terraform apply -auto-approve tfplan
     Environment:
       Name: dev
       Connections:

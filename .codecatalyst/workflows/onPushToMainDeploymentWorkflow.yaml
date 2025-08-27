@@ -71,18 +71,6 @@ Actions:
             wget https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip
             unzip terraform_1.9.8_linux_amd64.zip
             chmod +x terraform
-        - Run: |
-            echo "Checking all directories recursively:"
-            find / -name "*tfplan*" 2>/dev/null || true
-            echo "Checking CODEBUILD environment variables:"
-            env | grep -i artifact || true
-            echo "Checking for any terraform files:"
-            find . -name "*.tf*" -type f
-        # - Run: ./terraform init
-        # - Run: |
-        #     echo "Re-creating plan in apply step as workaround:"
-        #     ./terraform plan -var="environment=dev" -var="region=eu-central-1" -out=tfplan
-        # - Run: cd $CATALYST_SOURCE_DIR_ART01
         - Run: ./terraform apply -auto-approve tfplan
     Environment:
       Name: dev

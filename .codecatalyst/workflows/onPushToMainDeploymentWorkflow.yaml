@@ -29,9 +29,9 @@ Actions:
       Artifacts:
         - Name: TerraformPlanArtifact
           Files:
-            - "build-output/tfplan"
-            - "build-output/.terraform.lock.hcl"
-            - "build-output/.terraform/**"
+            - "tfplan"
+            - ".terraform.lock.hcl"
+            - ".terraform/**"
     Configuration:
       Steps:
         - Run: |

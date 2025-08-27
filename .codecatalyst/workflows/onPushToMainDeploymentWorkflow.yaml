@@ -32,6 +32,7 @@ Actions:
             - "tfplan"
             - ".terraform.lock.hcl"
             - ".terraform/**"
+            - ".terraform/provider/**/*"
     Configuration:
       Steps:
         - Run: |

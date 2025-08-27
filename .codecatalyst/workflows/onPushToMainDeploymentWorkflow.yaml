@@ -22,9 +22,9 @@ Actions:
     Compute:
       Type: EC2
       Fleet: Linux.x86-64.Large
-    Inputs:
-      Sources:
-        - WorkflowSource
+    # Inputs:
+    #   Sources:
+    #     - WorkflowSource
     Outputs:
       Artifacts:
         - Name: TerraformPlanArtifact

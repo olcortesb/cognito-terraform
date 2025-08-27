@@ -31,7 +31,7 @@ Actions:
           Files:
             - build-output/tfplan
             - build-output/.terraform.lock.hcl
-            - build-output/.terraform
+            - build-output/.terraform/**
     Configuration:
       Steps:
         - Run: |
